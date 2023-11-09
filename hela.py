@@ -18,6 +18,8 @@ def iterateLines(file):
         lineNum += 1
         line = line.strip()
         line = line.strip("\n")
+
+        # check for empty line
         if (line == ""):
             output += "\\\\\n"
             continue
@@ -27,11 +29,12 @@ def iterateLines(file):
             if ("|---|" in file[lineNum + 1]):
                 PositionInfo.inTable = True
 
+        # if we are in a table, find out the length of it
         if (PositionInfo.inTable):
             if (line[0] == "|"):
                 PositionInfo.MdTable.append(line)
                 continue
-            else:
+            else:  # table ended, so add converted table to output
                 output += (markdown_table_to_latex(PositionInfo.MdTable))
                 PositionInfo.inTable = False
                 PositionInfo.MdTable = []
@@ -58,7 +61,7 @@ def iterateLines(file):
 
     print(output)
 
-
+# info about the point in Document where we are converting
 class PositionInfo:
     inDoubleDollar = False
     inTable = False
