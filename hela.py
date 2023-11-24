@@ -43,6 +43,8 @@ def iterateLines(file):
         # need linebreaks in that scope
         if ("$$" in line):
             PositionInfo.inDoubleDollar = not PositionInfo.inDoubleDollar
+            output += (line + "\n")
+            continue
 
         # handle Headings
         if len(line) >= 2 and line[:2] == "# ":
