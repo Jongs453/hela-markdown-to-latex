@@ -48,13 +48,14 @@ def iterateLines(file):
 
         # handle Headings
         if len(line) >= 2 and line[:2] == "# ":
-            output += ("\\section*{ " + line[2:] + " }\n")
+            output += ("\\section*{" + line[2:] + "}\n")
             continue
         elif len(line) >= 3 and line[:3] == "## ":
-            output += ("\\subsection*{ " + line[3:] + " }\n")
+            output += ("\\subsection*{" + line[3:] + "}\n")
             continue
         elif len(line) >= 4 and line[:4] == "### ":
-            output += ("subsubsection*{ " + line[4:] + " }\n")
+            output += ("\\subsubsection*{" + line[4:] + "}\n")
+            continue
 
         if (PositionInfo.inDoubleDollar):
             output += (line + "\n")
@@ -62,6 +63,7 @@ def iterateLines(file):
         output += (line + " \\\\\n")
 
     print(output)
+
 
 # info about the point in Document where we are converting
 class PositionInfo:
