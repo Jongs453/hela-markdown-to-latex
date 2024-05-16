@@ -1,4 +1,5 @@
 import sys
+import re
 
 
 def openFile(file_path):
@@ -26,7 +27,7 @@ def iterateLines(file):
 
         # Check if there is a table
         if (line[0] == "|"):
-            if ("|---|" in file[lineNum + 1]):
+            if (re.search(r"\|[-]*\|",  file[lineNum + 1].replace(" ", ""))):
                 PositionInfo.inTable = True
 
         # if we are in a table, find out the length of it
@@ -85,7 +86,7 @@ def markdown_table_to_latex(markdownArr):
     out += "\n\\hline\n"
 
     def rowToLatex(thisRow):
-        return (thisRow.strip()[1:len(thisRow) - 1]).replace("|", " & ") + " \\\\"
+        return (thisRow.strip()[1:len(thisRow)-1]).replace("|", " & ")+" \\\\"
 
     # header
     out += rowToLatex(markdownArr[0]) + "\n\\hline\n\\hline\n"
@@ -94,7 +95,7 @@ def markdown_table_to_latex(markdownArr):
     for i in range(2, rows):
         out += rowToLatex(markdownArr[i]) + "\n\\hline\n"
 
-    out += "\\end{tabular}\n"
+    out += "\\end{tabular}\\\\\n"
     return out
 
 
