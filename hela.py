@@ -44,6 +44,12 @@ def iterateLines(file):
         # need linebreaks in that scope
         if ("$$" in line):
             PositionInfo.inDoubleDollar = not PositionInfo.inDoubleDollar
+            # check if we have an align block, we dont need that line then
+            if (PositionInfo.inDoubleDollar and "\\begin{align" in file[lineNum + 1]):
+                continue  # next line align check
+            if (lineNum != 0 and not PositionInfo.inDoubleDollar and "\\end{align" in file[lineNum-1]):
+                continue
+
             output += (line + "\n")
             continue
 
@@ -63,6 +69,8 @@ def iterateLines(file):
             continue
         output += (line + " \\\\\n")
 
+    output = output.replace("\\begin{align}", "\\begin{align*}")
+    output = output.replace("\\end{align}", "\\end{align*}")
     print(output)
 
 
