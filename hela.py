@@ -21,18 +21,25 @@ def iterateLines(file):
         line = line.strip("\n")
 
         # check for empty line
-        if (line == ""):
-            output += "\\\\\n"
+        if (line == "" and not PositionInfo.inTable):
+            # if we are right after a headder we dont want double backslashs
+            if (PositionInfo.postHeadder):
+                output += "\n"
+            else:
+                output += "\\\\\n"
             continue
 
+        # line is not empty, so post header is irrevelant
+        PositionInfo.postHeadder = False
+
         # Check if there is a table
-        if (line[0] == "|"):
+        if (not PositionInfo.inTable and line[0] == "|"):
             if (re.search(r"\|[-]*\|",  file[lineNum + 1].replace(" ", ""))):
                 PositionInfo.inTable = True
 
         # if we are in a table, find out the length of it
         if (PositionInfo.inTable):
-            if (line[0] == "|"):
+            if (line != "" and line[0] == "|"):
                 PositionInfo.MdTable.append(line)
                 continue
             else:  # table ended, so add converted table to output
@@ -56,12 +63,15 @@ def iterateLines(file):
         # handle Headings
         if len(line) >= 2 and line[:2] == "# ":
             output += ("\\section*{" + line[2:] + "}\n")
+            PositionInfo.postHeadder = True
             continue
         elif len(line) >= 3 and line[:3] == "## ":
             output += ("\\subsection*{" + line[3:] + "}\n")
+            PositionInfo.postHeadder = True
             continue
         elif len(line) >= 4 and line[:4] == "### ":
             output += ("\\subsubsection*{" + line[4:] + "}\n")
+            PositionInfo.postHeadder = True
             continue
 
         if (PositionInfo.inDoubleDollar):
@@ -78,6 +88,7 @@ def iterateLines(file):
 class PositionInfo:
     inDoubleDollar = False
     inTable = False
+    postHeadder = True
     MdTable = []
 
 
@@ -109,7 +120,7 @@ def markdown_table_to_latex(markdownArr):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python iterate_file.py <file_path>")
+        print("Usage: python hela.py <file_path>")
     else:
         file_path = sys.argv[1]
         openFile(file_path)
